@@ -1,0 +1,91 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper functions ──────────────────────────────────────
+    function isAuth() {
+      return request.auth != null;
+    }
+    function isOwner(userId) {
+      return isAuth() && request.auth.uid == userId;
+    }
+    function isParticipant(participants) {
+      return isAuth() && request.auth.uid in participants;
+    }
+
+    // ── Users ─────────────────────────────────────────────────
+    // Đọc: public (cần để hiển thị markers)
+    // Ghi: chỉ chính user đó
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if isOwner(userId);
+    }
+
+    // ── Connections ───────────────────────────────────────────
+    // ID = sorted [fromId, toId].join("_")
+    match /connections/{connId} {
+      allow read: if isAuth();
+      allow create: if isAuth()
+        && request.resource.data.fromId == request.auth.uid;
+      allow update: if isAuth()
+        && (resource.data.fromId == request.auth.uid
+            || resource.data.toId == request.auth.uid);
+      allow delete: if isAuth()
+        && (resource.data.fromId == request.auth.uid
+            || resource.data.toId == request.auth.uid);
+    }
+
+    // ── Signals ───────────────────────────────────────────────
+    // Đọc: tất cả authenticated users
+    // Ghi: chỉ chính user đó
+    match /signals/{signalId} {
+      allow read: if isAuth();
+      allow create: if isAuth()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.expiresAt > request.time.toMillis();
+      allow delete: if isAuth()
+        && resource.data.userId == request.auth.uid;
+    }
+
+    // ── Groups ────────────────────────────────────────────────
+    // Đọc: tất cả authenticated
+    // Tạo: authenticated
+    // Sửa/xóa: chỉ creator
+    match /groups/{groupId} {
+      allow read: if isAuth();
+      allow create: if isAuth()
+        && request.resource.data.creatorId == request.auth.uid;
+      allow update, delete: if isAuth()
+        && resource.data.creatorId == request.auth.uid;
+    }
+
+    // ── Chats ─────────────────────────────────────────────────
+    // Thread: đọc/ghi nếu là participant
+    // Messages: subcollection — participant
+    match /chats/{threadId} {
+      allow read, write: if isAuth()
+        && request.auth.uid in resource.data.participants;
+      allow create: if isAuth()
+        && request.auth.uid in request.resource.data.participants;
+
+      match /messages/{messageId} {
+        allow read: if isAuth()
+          && request.auth.uid in get(/databases/$(database)/documents/chats/$(threadId)).data.participants;
+        allow create: if isAuth()
+          && request.resource.data.senderId == request.auth.uid;
+      }
+    }
+
+    // ── CDN-specific: Members, Posts, Stories ─────────────────
+    match /members/{userId} {
+      allow read: if true;
+      allow write: if isOwner(userId);
+    }
+
+    match /posts/{postId} {
+      allow read: if true;
+      allow create: if isAuth();
+      allow update, delete: if isAuth() && resource.data.authorId == request.auth.uid;
+    }
+  }
+}

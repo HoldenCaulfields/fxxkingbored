@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════
+   VIBEMAP CDN — Design System
+   Palette: Sáng sủa, tươi, không dark
+═══════════════════════════════════════════ */
+:root {
+  /* Backgrounds */
+  --bg:         #f2f4f8;
+  --bg-card:    #ffffff;
+  --bg-subtle:  #f8fafc;
+
+  /* Brand */
+  --rose:       #f43f5e;
+  --rose-soft:  #fff1f3;
+  --blue:       #3b82f6;
+  --blue-soft:  #eff6ff;
+  --green:      #22c55e;
+  --green-soft: #f0fdf4;
+  --amber:      #f59e0b;
+  --amber-soft: #fffbeb;
+  --violet:     #8b5cf6;
+  --cyan:       #06b6d4;
+
+  /* Text */
+  --text:       #0f172a;
+  --text-2:     #475569;
+  --text-muted: #94a3b8;
+
+  /* Borders */
+  --border:     rgba(15, 23, 42, 0.07);
+  --border-2:   rgba(15, 23, 42, 0.04);
+
+  /* Shadows */
+  --shadow-xs:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm:  0 2px 8px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-md:  0 4px 20px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:  0 8px 32px rgba(0,0,0,0.10), 0 3px 10px rgba(0,0,0,0.05);
+  --shadow-xl:  0 16px 48px rgba(0,0,0,0.12), 0 6px 16px rgba(0,0,0,0.06);
+
+  /* Layout */
+  --nav-h:      68px;
+  --filter-h:   100px;
+  --r-sm:       12px;
+  --r-md:       16px;
+  --r-lg:       20px;
+  --r-xl:       24px;
+  --r-2xl:      28px;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+html, body, #__next {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Plus Jakarta Sans', sans-serif;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar hide ── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Leaflet overrides ── */
+.leaflet-container { z-index: 1; }
+.leaflet-control-attribution { display: none !important; }
+.leaflet-control-zoom {
+  margin-bottom: calc(var(--nav-h) + var(--filter-h) + 24px) !important;
+  margin-right: 12px !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.leaflet-control-zoom a {
+  width: 34px !important;
+  height: 34px !important;
+  line-height: 32px !important;
+  border-radius: 10px !important;
+  border: 1px solid var(--border) !important;
+  background: rgba(255,255,255,0.95) !important;
+  color: var(--text) !important;
+  font-size: 17px !important;
+  box-shadow: var(--shadow-sm) !important;
+  margin-bottom: 4px !important;
+  display: block !important;
+}
+.leaflet-control-zoom a:hover {
+  background: white !important;
+}
+
+/* ── Safe area ── */
+.pb-safe { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+
+/* ── Animations ── */
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%);  }
+}
+@keyframes pulse-ring {
+  0%   { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2); opacity: 0;   }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-4px); }
+}
+
+/* ── Glass morphism helper ── */
+.glass {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.7);
+}
+
+/* ── Panel base ── */
+.panel {
+  background: var(--bg);
+  position: absolute;
+  inset: 0;
+  z-index: 2500;
+  display: flex;
+  flex-direction: column;
+}
