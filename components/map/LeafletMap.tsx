@@ -10,6 +10,7 @@ import UserCard from "./UserCard";
 import CollegeModal from "./cdn/CollegeModal";
 import MarkerCDN from "./cdn/MarkerCDN";
 import ChatScreen from "@/components/chat/ChatScreen";
+import UserOwnMarker from "./UserOwnMarker";
 
 const CENTER: [number, number] = [11.563022, 109.013219];
 
@@ -42,6 +43,10 @@ export default function LeafletMap({ onVisitCollege }: { onVisitCollege: () => v
           attribution=""
         />
         <MarkerCDN onClick={() => setCollegeOpen(true)} />
+        {/* Own marker - always on top */}
+        {my.location && my.id && my.id !== "me" && (
+          <UserOwnMarker profile={my} />
+        )}
         <AllMarkers onUserClick={setSelectedUser} />
       </MapContainer>
 

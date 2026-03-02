@@ -103,9 +103,14 @@ export default function AllMarkers({
   const myProfile = useUserStore((s) => s.profile);
   const firestoreUsers = useProfiles();
 
+  // Filter out hidden users and current user
+  const visibleUsers = firestoreUsers.filter(
+    user => (user.isVisible ?? true) && user.id !== myProfile.id
+  );
+
   return (
     <>
-      {firestoreUsers.map((user) => (
+      {visibleUsers.map((user) => (
         <UserMarker
           key={user.id}
           marker={user}

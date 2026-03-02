@@ -9,6 +9,10 @@ export default function ProfileCircle({ onClick }: { onClick?: () => void }) {
   const categories = useUserStore(s => s.profile.categories)
   const profile = useUserStore(s => s.profile)
 
+  const isVisible = profile.isVisible ?? true
+  const isAnonymous = profile.isAnonymous ?? false
+  const isPinned = profile.isPinned ?? false
+
   const { funPercent } = useMemo(
     () => getPersonaPercentFromCategories(categories),
     [categories]
@@ -22,6 +26,10 @@ export default function ProfileCircle({ onClick }: { onClick?: () => void }) {
   const circumference = radius * 2 * Math.PI;
 
   const funStrokeDashoffset = circumference * (1 - funPercent / 100)
+
+  // Visibility status badge styling
+  const statusIcon = !isVisible ? "🚫" : isAnonymous ? "🎭" : "✅";
+  const statusColor = !isVisible ? "#ef4444" : isAnonymous ? "#a78bfa" : "#22c55e";
 
   return (
     <div className="relative flex items-center justify-center w-full aspect-square max-w-[70px] sm:max-w-[85px]">
@@ -77,6 +85,25 @@ export default function ProfileCircle({ onClick }: { onClick?: () => void }) {
           <span className="text-[8px] font-black text-white">EDIT</span>
         </div>
       </div>
+
+      {/* Visibility Status Badge */}
+      <div
+        className="absolute -top-1 -right-1 z-40 w-7 h-7 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-sm"
+        style={{ background: statusColor }}
+        title={!isVisible ? "Ẩn khỏi bản đồ" : isAnonymous ? "Ẩn danh" : "Hiển thị"}
+      >
+        {statusIcon}
+      </div>
+
+      {/* Pin Badge */}
+      {isPinned && (
+        <div
+          className="absolute -bottom-1 -right-1 z-40 w-6 h-6 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-xs bg-amber-400"
+          title="Vị trí cố định"
+        >
+          📌
+        </div>
+      )}
     </div>
   )
 }

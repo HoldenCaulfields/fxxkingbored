@@ -24,29 +24,36 @@ export default function TopStatsBar() {
   const [open, setOpen] = useState(false);
 
   const isVisible = myProfile.isVisible ?? true;
+  const isAnonymous = myProfile.isAnonymous ?? false;
 
   const activeCats = useMemo(
     () => Array.from(new Set(myProfile.categories)) as Category[],
     [myProfile.categories]
   );
 
+  // Only count visible users
   const matchUsers = useMemo(
-    () => nearby.filter(p => p.categories?.some(c => myProfile.categories.includes(c))).length,
+    () => nearby.filter(p => (p.isVisible ?? true) && p.categories?.some(c => myProfile.categories.includes(c))).length,
     [nearby, myProfile.categories]
   );
 
   const topMatch = useMemo(() => {
     if (!nearby.length) return null;
-    return nearby.reduce((best, p) =>
+    // Filter visible users
+    const visibleNearby = nearby.filter(p => p.isVisible ?? true);
+    if (!visibleNearby.length) return null;
+    return visibleNearby.reduce((best, p) =>
       computeMatchScore(myProfile, p) > computeMatchScore(myProfile, best) ? p : best,
-      nearby[0]
+      visibleNearby[0]
     );
   }, [nearby, myProfile]);
 
   const topMatchScore = topMatch ? computeMatchScore(myProfile, topMatch) : 0;
   const avgMatchPct = useMemo(() => {
-    if (!myProfile.categories.length || !nearby.length) return 0;
-    const scores = nearby.map(p => computeMatchScore(myProfile, p));
+    if (!myProfile.categories.length) return 0;
+    const visibleNearby = nearby.filter(p => p.isVisible ?? true);
+    if (!visibleNearby.length) return 0;
+    const scores = visibleNearby.map(p => computeMatchScore(myProfile, p));
     return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
   }, [nearby, myProfile]);
 
@@ -54,6 +61,12 @@ export default function TopStatsBar() {
     getPersonaPercentFromCategories(myProfile.categories), [myProfile.categories]
   );
   const matchColor = avgMatchPct >= 70 ? "#22c55e" : avgMatchPct >= 40 ? "#f59e0b" : "#94a3b8";
+
+  // Visibility status styling
+  const visibilityColor = !isVisible ? "#ef4444" : isAnonymous ? "#a78bfa" : "#22c55e";
+  const visibilityBg = !isVisible ? "#fef2f2" : isAnonymous ? "#faf5ff" : "#f0fdf4";
+  const visibilityText = !isVisible ? "Ẩn khỏi bản đồ" : isAnonymous ? "Ẩn danh" : "Hiển thị";
+  const visibilityIcon = !isVisible ? "🚫" : isAnonymous ? "🎭" : "✅";
 
   return (
     <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[3000] w-[calc(100%-1.5rem)] max-w-[360px]">
@@ -70,6 +83,16 @@ export default function TopStatsBar() {
           boxShadow: "0 4px 20px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04)",
         }}
       >
+        {/* Visibility Status - New indicator */}
+        <div className="flex flex-col items-center px-3 py-2.5 min-w-[60px] border-r border-slate-100">
+          <div className="flex items-center gap-1">
+            <span className="text-base">{visibilityIcon}</span>
+            <span className="text-[11px] font-bold uppercase tracking-wide" style={{ color: visibilityColor }}>
+              {visibilityText}
+            </span>
+          </div>
+        </div>
+
         {/* Vibers count */}
         <div className="flex flex-col items-center px-3.5 py-2.5 min-w-[54px]">
           <div className="flex items-center gap-1.5">
@@ -196,20 +219,75 @@ export default function TopStatsBar() {
               className="w-full flex items-center justify-between rounded-xl px-3.5 py-2.5 transition-all"
               style={isVisible
                 ? { background: "#f0fdf4", border: "1.5px solid #bbf7d0" }
-                : { background: "#f8fafc", border: "1.5px solid #eef2f7" }}
+                : { background: "#fef2f2", border: "1.5px solid #fecdd3" }}
             >
               <div className="flex items-center gap-2">
                 {isVisible
                   ? <Eye size={14} style={{ color: "#22c55e" }} />
-                  : <EyeOff size={14} style={{ color: "#94a3b8" }} />}
-                <span className="text-[11px] font-semibold" style={{ color: isVisible ? "#15803d" : "#94a3b8" }}>
-                  {isVisible ? "Đang hiển thị trên bản đồ" : "Đang ẩn khỏi bản đồ"}
+                  : <EyeOff size={14} style={{ color: "#ef4444" }} />}
+                <span className="text-[11px] font-semibold" style={{ color: isVisible ? "#15803d" : "#991b1b" }}>
+                  {isVisible ? "✅ Hiển thị trên bản đồ" : "❌ Ẩn khỏi bản đồ"}
                 </span>
               </div>
               <div className="relative w-9 h-5 rounded-full transition-colors"
-                style={{ background: isVisible ? "#22c55e" : "#cbd5e1" }}>
+                style={{ background: isVisible ? "#22c55e" : "#ef4444" }}>
                 <motion.div
                   animate={{ x: isVisible ? 17 : 2 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 28 }}
+                  className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow"
+                />
+              </div>
+            </button>
+
+            {/* Anonymous toggle */}
+            <button
+              onClick={e => { e.stopPropagation(); updateProfile({ isAnonymous: !isAnonymous }); }}
+              className="w-full flex items-center justify-between rounded-xl px-3.5 py-2.5 transition-all"
+              style={isAnonymous
+                ? { background: "#faf5ff", border: "1.5px solid #e9d5ff" }
+                : { background: "#f8fafc", border: "1.5px solid #eef2f7" }}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-base">{isAnonymous ? "🎭" : "👤"}</span>
+                <div className="flex flex-col items-start">
+                  <span className="text-[11px] font-semibold" style={{ color: isAnonymous ? "#7c3aed" : "#64748b" }}>
+                    {isAnonymous ? "Ẩn danh - Tên & ảnh ẩn" : "Hiển thị tên & ảnh"}
+                  </span>
+                  <span className="text-[8px] text-slate-400">Người khác chỉ thấy vibe của bạn</span>
+                </div>
+              </div>
+              <div className="relative w-9 h-5 rounded-full transition-colors"
+                style={{ background: isAnonymous ? "#a78bfa" : "#cbd5e1" }}>
+                <motion.div
+                  animate={{ x: isAnonymous ? 17 : 2 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 28 }}
+                  className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow"
+                />
+              </div>
+            </button>
+
+            {/* Pinned toggle */}
+            <button
+              onClick={e => { e.stopPropagation(); updateProfile({ isPinned: !myProfile.isPinned }); }}
+              disabled={!myProfile.location}
+              className="w-full flex items-center justify-between rounded-xl px-3.5 py-2.5 transition-all disabled:opacity-50"
+              style={myProfile.isPinned
+                ? { background: "#fffbeb", border: "1.5px solid #fde68a" }
+                : { background: "#f8fafc", border: "1.5px solid #eef2f7" }}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-base">{myProfile.isPinned ? "📌" : "📍"}</span>
+                <div className="flex flex-col items-start">
+                  <span className="text-[11px] font-semibold" style={{ color: myProfile.isPinned ? "#b45309" : "#64748b" }}>
+                    {myProfile.isPinned ? "Vị trí cố định" : "Vị trí động"}
+                  </span>
+                  <span className="text-[8px] text-slate-400">{myProfile.isPinned ? "Marker sẽ đứng yên" : "Marker cập nhật theo GPS"}</span>
+                </div>
+              </div>
+              <div className="relative w-9 h-5 rounded-full transition-colors"
+                style={{ background: myProfile.isPinned ? "#f59e0b" : "#cbd5e1" }}>
+                <motion.div
+                  animate={{ x: myProfile.isPinned ? 17 : 2 }}
                   transition={{ type: "spring", stiffness: 400, damping: 28 }}
                   className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow"
                 />
