@@ -488,8 +488,8 @@ const EditProfileModal: React.FC<Props> = ({ onClose }) => {
                 <div className={cardCls}>
                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-wider px-4 pt-4 pb-2">Hiển thị bản đồ</p>
                   {[
-                    { label: 'Hiển thị trên bản đồ', sub: 'Người khác có thể thấy bạn', on: isVisible, toggle: () => setIsVisible(v => !v), color: '#22c55e', icon: isVisible ? <MapPin size={15}/> : <MapPinOff size={15}/> },
-                    { label: 'Ẩn danh', sub: 'Ẩn tên & ảnh, chỉ hiện vibe', on: isAnonymous, toggle: () => setIsAnonymous(v => !v), color: '#8b5cf6', icon: isAnonymous ? <EyeOff size={15}/> : <Eye size={15}/> },
+                    { label: 'Hiển thị trên bản đồ', sub: 'Người khác có thể thấy bạn', on: isVisible, toggle: () => setIsVisible((v: boolean) => !v), color: '#22c55e', icon: isVisible ? <MapPin size={15}/> : <MapPinOff size={15}/> },
+                    { label: 'Ẩn danh', sub: 'Ẩn tên & ảnh, chỉ hiện vibe', on: isAnonymous, toggle: () => setIsAnonymous((v: boolean) => !v), color: '#8b5cf6', icon: isAnonymous ? <EyeOff size={15}/> : <Eye size={15}/> },
                     { label: 'Ghim vị trí', sub: 'Marker cố định trên bản đồ', on: profile.isPinned, toggle: () => updateProfile({ isPinned: !profile.isPinned }), color: '#f59e0b', icon: <MapPin size={15}/> },
                   ].map((row, i) => (
                     <div key={row.label} className={`flex items-center justify-between px-4 py-3.5 border-t border-gray-100 ${i === 0 ? 'border-t-0' : ''}`}>

@@ -24,15 +24,15 @@ const PersonaDetailModal: React.FC<PersonaDetailModalProps> = ({ user, myScore, 
       ? calculateDistance(myLocation, user.location)
       : null;
 
-  const selectedOptions = CATEGORIES.flatMap(cat =>
-    cat.subOptions
-      .filter(opt => user.selectedOptions?.includes(opt.id))
-      .map(opt => ({
-        ...opt,
-        categoryIcon: cat.icon,
-        categoryLabel: cat.label
-      }))
-  );
+  const selectedOptions = user.categories ? user.categories.map((catId: string) => {
+    const cat = CATEGORIES.find(c => c.id === catId);
+    return {
+      id: catId,
+      label: cat?.label || catId,
+      categoryIcon: cat?.icon || '📌',
+      categoryLabel: cat?.label || 'Khác'
+    };
+  }) : [];
 
   // Render Social Icons Helper
   const renderSocials = (links?: SocialLinks) => {

@@ -88,3 +88,73 @@ firebase deploy --only firestore:indexes
 - **Plus Jakarta Sans** — font (supports Vietnamese)
 - **Lucide React** — icons
 
+---
+
+## Deploy lên Vercel
+
+### 1. Đơn giản nhất - GitHub + Vercel
+```bash
+# Push code lên GitHub
+git add .
+git commit -m "Deploy to Vercel"
+git push origin main
+```
+
+Sau đó vào [vercel.com](https://vercel.com):
+1. Click "New Project"
+2. Import repo từ GitHub
+3. Configure environment variables
+4. Click "Deploy"
+
+### 2. Dùng Vercel CLI
+```bash
+npm install -g vercel
+vercel
+```
+
+### 3. Environment Variables trên Vercel
+Trong **Settings → Environment Variables**, thêm:
+- `NEXT_PUBLIC_FIREBASE_API_KEY` (và các Firebase config khác)
+- `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` (nếu dùng upload)
+
+**Tất cả Firebase keys đã sẵn trong `lib/firebase.ts`** ✅
+
+---
+
+## Tính năng chính ✅
+
+✅ **Map interaktif** — Hiển thị sinh viên trên bản đồ Ninh Thuận  
+✅ **User profiles** — Persona (fun/study ratio), mood, interests  
+✅ **Real-time Chat** — Instantly tin nhắn giữa users  
+✅ **Connections** — Kết nối/Follow users  
+✅ **Signals** — Broadcasting status (coffee, study, chill)  
+✅ **Study Groups** — Tạo/Tham gia nhóm học  
+✅ **College Details** — News, events, timetable, beauty contest  
+✅ **Matching** — AI-like scoring dựa vào interests  
+✅ **Responsive** — Mobile-first design ✨  
+
+---
+
+## Troubleshooting Build
+
+Nếu gặp lỗi TypeScript khi build:
+```bash
+# Xóa cache
+rm -rf .next node_modules package-lock.json
+
+# Cài lại
+npm install
+
+# Build
+npm run build
+```
+
+Nếu lỗi persists:
+- Check `tsconfig.json` valid
+- Check imports không có typo
+- Run `npm run lint` để catch lỗi sớm
+
+---
+
+**Status:** 🚀 Ready for Production  
+**Last Updated:** March 2, 2026

@@ -11,6 +11,11 @@ export interface SocialLinks {
   zalo?: string;
 }
 
+export interface PersonaScore {
+  fun: number;
+  study: number;
+}
+
 export interface UserProfile {
   id: string;
   name: string;
@@ -21,6 +26,7 @@ export interface UserProfile {
   interests: InterestItem[];
   customTags: string[];
   history: InterestSnapshot[];
+  selectedOptions?: string[];
   isPinned: boolean;
   currentMood?: string;
   socialLinks?: SocialLinks;

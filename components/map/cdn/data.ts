@@ -15,8 +15,10 @@ export const COLLEGE_DATA: CollegeData = {
   stats: {
     members: 1250,
     posts: 450,
-    groups: 24
-  }
+    groups: 24,
+    teachers: 120
+  },
+  departments: ["Công nghệ thông tin", "Điện – Điện tử", "Ô tô", "Du lịch", "Tiếng Anh", "Cơ khí"]
 };
 
 export const MOCK_MEMBERS: Member[] = [

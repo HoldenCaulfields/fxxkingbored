@@ -1045,43 +1045,43 @@ export default function CollegeDetailView({ onBack }: { onBack?: () => void }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#f4f6f9] flex flex-col max-w-lg mx-auto relative">
+    <div className="h-screen w-full bg-[#f4f6f9] flex flex-col relative">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 px-4 py-3 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 px-4 py-3 flex items-center justify-between flex-shrink-0">
         <button onClick={onBack} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600">
           <Icon.ArrowLeft />
         </button>
-        <div className="flex items-center gap-2">
-          <img src={COLLEGE.avatar} alt="" className="w-8 h-8 rounded-xl object-cover" />
-          <div className="text-left">
-            <h1 className="font-black text-slate-900 text-sm leading-none">{COLLEGE.shortName}</h1>
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <img src={COLLEGE.avatar} alt="" className="w-8 h-8 rounded-xl object-cover flex-shrink-0" />
+          <div className="text-left min-w-0">
+            <h1 className="font-black text-slate-900 text-sm leading-none truncate">{COLLEGE.shortName}</h1>
             <p className="text-[10px] text-slate-400 mt-0.5">Ninh Thuận 🌴</p>
           </div>
         </div>
-        <button className="relative p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600">
+        <button className="relative p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600 flex-shrink-0">
           <Icon.Bell />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white" />
         </button>
       </header>
 
       {/* Hero */}
-      <div className="shrink-0">
-        <div className="relative h-40">
+      <div className="flex-shrink-0 overflow-hidden">
+        <div className="relative h-40 w-full">
           <img src={COLLEGE.cover} alt="" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#f4f6f9]" />
         </div>
         <div className="px-4 -mt-10 flex items-end gap-3 relative z-10">
-          <div className="w-20 h-20 rounded-2xl shadow-xl overflow-hidden bg-white border-4 border-white shrink-0">
+          <div className="w-20 h-20 rounded-2xl shadow-xl overflow-hidden bg-white border-4 border-white flex-shrink-0">
             <img src={COLLEGE.avatar} alt="" className="w-full h-full object-cover" />
           </div>
-          <div className="pb-2 flex-1">
-            <h2 className="font-black text-slate-900 text-base leading-tight">{COLLEGE.name}</h2>
-            <p className="text-xs text-rose-500 font-semibold mt-0.5">{COLLEGE.bio}</p>
+          <div className="pb-2 flex-1 min-w-0">
+            <h2 className="font-black text-slate-900 text-base leading-tight line-clamp-2">{COLLEGE.name}</h2>
+            <p className="text-xs text-rose-500 font-semibold mt-0.5 line-clamp-1">{COLLEGE.bio}</p>
           </div>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-2 px-4 mt-4">
+        <div className="grid grid-cols-4 gap-2 px-4 mt-4 mb-4">
           {[
             { label: "Sinh viên", value: `${(COLLEGE.stats.members / 1000).toFixed(1)}k`, color: "#3b82f6" },
             { label: "Bài viết",  value: `${(COLLEGE.stats.posts / 1000).toFixed(1)}k`,   color: "#f43f5e" },
@@ -1097,13 +1097,13 @@ export default function CollegeDetailView({ onBack }: { onBack?: () => void }) {
       </div>
 
       {/* Tabs */}
-      <div className="mt-4 bg-white border-b border-slate-100 shrink-0">
-        <div className="flex gap-1 px-4 py-2.5 overflow-x-auto no-scrollbar">
+      <div className="bg-white border-b border-slate-100 flex-shrink-0 overflow-x-auto">
+        <div className="flex gap-1 px-4 py-2.5 no-scrollbar">
           {TABS.map(tab => {
             const isActive = activeTab === tab.id;
             return (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                className="relative shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap"
+                className="relative flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap"
                 style={isActive
                   ? { background: "#f43f5e", color: "white" }
                   : { background: "#f8fafc", color: "#64748b" }
@@ -1121,8 +1121,8 @@ export default function CollegeDetailView({ onBack }: { onBack?: () => void }) {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="px-4 pt-4 pb-24">
+      <div className="flex-1 overflow-y-auto min-h-0">
+        <div className="px-4 pt-4 pb-20 w-full">
           <AnimatePresence mode="wait">
             <motion.div key={activeTab}
               initial={{ opacity: 0, y: 12 }}
